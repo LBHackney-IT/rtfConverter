@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>RTF to HTML Converter</title>
+    <style>
+      body {
+        font-family: sans-serif;
+      }
+      iframe {
+        display: none;
+        height: 1200px;
+        width: 800px;
+        margin-bottom: 10px;
+      }
+      iframe.visible {
+        display: block;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>RTF to HTML Converter</h1>
+    <iframe srcdoc=""></iframe>
+    <p>Upload RTF File:</p>
+    <input id="file" type="file" />
+    <button id="submit">Upload file</button>
+    <script>
+      async function makeRequest(fileBody) {
+        const response = await fetch(".", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/rtf",
+          },
+          body: fileBody,
+        });
+        let body = await response.text();
+        var iframe = document.querySelector("iframe");
+        iframe.setAttribute("srcdoc", body);
+        iframe.classList.add("visible");
+      }
+      function uploadFile() {
+        var file = document.getElementById("file").files[0];
+        if (file) {
+          var reader = new FileReader();
+          reader.readAsText(file, "UTF-8");
+          reader.onload = async function (evt) {
+            await makeRequest(evt.target.result);
+          };
+          reader.onerror = function (err) {
+            console.log(err);
+          };
+        }
+      }
+
+      document.querySelector("#submit").addEventListener("click", uploadFile);
+    </script>
+  </body>
+</html>

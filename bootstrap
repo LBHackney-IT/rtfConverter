@@ -1,0 +1,21 @@
+#!/bin/sh
+
+set -euo pipefail
+
+# Initialization - load function handler
+HANDLER_SCRIPT="$LAMBDA_TASK_ROOT/$(echo $_HANDLER | cut -d. -f1).pl"
+HANDLER_FN="$(echo $_HANDLER | cut -d. -f2)"
+# Processing
+while true
+do
+  export HEADERS="$(mktemp)"
+  # Get an event
+  export EVENT_DATA=$(curl -sS -LD "$HEADERS" -X GET "http://${AWS_LAMBDA_RUNTIME_API}/2018-06-01/runtime/invocation/next")
+  echo $HEADERS
+  echo "$(cat $HEADERS)"
+  export REQUEST_ID=$(grep -Fi Lambda-Runtime-Aws-Request-Id "$HEADERS" | tr -d '[:space:]' | cut -d: -f2)
+  # Execute the handler function from the script
+  RESPONSE=$(/opt/bin/perl -I $LAMBDA_TASK_ROOT/extlocal/lib/perl5 -I $LAMBDA_TASK_ROOT/extlocal/lib/perl5/x86_64-linux $HANDLER_SCRIPT $HANDLER_FN)
+  # Send the response
+  curl -sS -X POST "http://${AWS_LAMBDA_RUNTIME_API}/2018-06-01/runtime/invocation/$REQUEST_ID/response"  -d "$RESPONSE"
+done
