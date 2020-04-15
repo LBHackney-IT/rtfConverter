@@ -27,11 +27,14 @@ const send_error = (statusCode, message) => {
 };
 
 const convertRtf = async (rtf) => {
-  fs.writeFileSync("./temp.rtf", rtf);
+  fs.writeFileSync("/tmp/temp.rtf", rtf);
   let html = "";
   let error = "";
   return new Promise((resolve, reject) => {
-    const converter = spawn("/opt/bin/perl", ["./rtf2html.pl", "./temp.rtf"]);
+    const converter = spawn("/opt/bin/perl", [
+      "./rtf2html.pl",
+      "/tmp/temp.rtf",
+    ]);
     converter.stdout.on("data", (data) => (html += data));
     converter.stderr.on("data", (data) => (error += data));
     converter.on("close", (code) => {

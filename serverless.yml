@@ -7,8 +7,8 @@ provider:
   stage: ${opt:stage}
   memorySize: 256
   layers:
-    - { Ref: PerlModulesLambdaLayer }
     - arn:aws:lambda:${self:provider.region}:445285296882:layer:perl-5-30-runtime:8
+    - { Ref: PerlModulesLambdaLayer }
 
 plugins:
   - serverless-offline

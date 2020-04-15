@@ -9,6 +9,11 @@ build-layer: build
     -v $(PWD)/perl_layer/lib/perl5/site_perl:/opt/lib/perl5/site_perl \
     rtf_converter:latest \
     cpanm --notest --no-man-pages XML::DOM RTF::HTMLConverter
+	docker run --rm \
+    -v $(PWD):/var/task \
+    -v $(PWD)/perl_layer/lib/perl5/site_perl:/opt/lib/perl5/site_perl \
+    rtf_converter:latest \
+    cp /usr/lib64/libcrypt.so.1 /usr/lib64/libexpat.so.1 /var/task/perl_layer/lib
 
 .PHONY: start
 start: build-layer
