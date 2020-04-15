@@ -4,16 +4,13 @@ build:
 
 .PHONY: build-layer
 build-layer: build
-	docker run --rm \
-    -v $(PWD):/var/task \
-    -v $(PWD)/perl_layer/lib/perl5/site_perl:/opt/lib/perl5/site_perl \
-    rtf_converter:latest \
-    cpanm --notest --no-man-pages XML::DOM RTF::HTMLConverter
-	docker run --rm \
-    -v $(PWD):/var/task \
-    -v $(PWD)/perl_layer/lib/perl5/site_perl:/opt/lib/perl5/site_perl \
-    rtf_converter:latest \
-    cp /usr/lib64/libcrypt.so.1 /usr/lib64/libexpat.so.1 /var/task/perl_layer/lib
+	rm -rf perl_layer
+	mkdir -p perl_layer/lib/perl5/
+	docker run --name build rtf_converter:latest /bin/true
+	docker cp build:/opt/lib/perl5/site_perl/ ./perl_layer/lib/perl5/
+	docker cp build:/usr/lib64/libcrypt-2.26.so ./perl_layer/lib/libcrypt.so.1
+	docker cp build:/usr/lib64/libexpat.so.1.6.0 ./perl_layer/lib/libexpat.so.1
+	docker rm build
 
 .PHONY: start
 start: build-layer
