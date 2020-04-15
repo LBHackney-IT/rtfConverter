@@ -80,6 +80,12 @@ jobs:
           command: |
             sudo npm i -g serverless
 
+      - setup_remote_docker
+
+      - run:
+          name: Build perl layer
+          command: make build-layer
+
       - run:
           name: Set AWS credentials
           command: |
