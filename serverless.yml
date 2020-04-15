@@ -1,29 +1,34 @@
-# Welcome to Serverless!
-#
-# This file is the main config file for your service.
-# It's very minimal at this point and uses default values.
 service: rtfConverter
 
 provider:
   name: aws
-  runtime: provided
+  runtime: nodejs12.x
   region: eu-west-2
   stage: ${opt:stage}
+  memorySize: 256
+  layers:
+    - { Ref: PerlModulesLambdaLayer }
+    - arn:aws:lambda:${self:provider.region}:445285296882:layer:perl-5-30-runtime:8
+
+plugins:
+  - serverless-offline
+
+package:
+  exclude:
+    - "Dockerfile"
+    - "*.rtf"
+    - "*.sh"
+    - "Makefile"
+
+layers:
+  perlModules:
+    path: perl_layer
+    description: The libraries required to run the RTF converter
 
 functions:
   convert:
-    handler: handler.convert
-    layers:
-      - arn:aws:lambda:${self:provider.region}:445285296882:layer:perl-5-30-runtime:8
+    handler: lambda.handler
     events:
       - http:
           path: "/"
-          method: POST
-  form:
-    handler: handler.form
-    layers:
-      - arn:aws:lambda:${self:provider.region}:445285296882:layer:perl-5-30-runtime:8
-    events:
-      - http:
-          path: "/"
-          method: GET
+          method: ANY

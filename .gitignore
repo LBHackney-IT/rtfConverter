@@ -1,2 +1,5 @@
 .serverless
 extlocal
+node_modules
+perl_layer
+*.rtf
