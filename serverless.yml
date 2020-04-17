@@ -9,6 +9,7 @@ provider:
   layers:
     - arn:aws:lambda:${self:provider.region}:445285296882:layer:perl-5-30-runtime:8
     - { Ref: PerlModulesLambdaLayer }
+    - { Ref: ImageLambdaLayer }
 
 plugins:
   - serverless-offline
@@ -19,11 +20,15 @@ package:
     - "*.rtf"
     - "*.sh"
     - "Makefile"
+    - "README.md"
 
 layers:
   perlModules:
     path: perl_layer
     description: The libraries required to run the RTF converter
+  image:
+    path: image_layer
+    description: Imagemagick and libwmf
 
 functions:
   convert:

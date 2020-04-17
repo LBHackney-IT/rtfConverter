@@ -14,5 +14,7 @@
     "debug": "export SLS_DEBUG=* && node --inspect ./node_modules/serverless/bin/serverless offline -s dev",
     "lint": "eslint --fix --ext js . && echo 'Lint complete.'"
   },
-  "dependencies": {}
+  "dependencies": {
+    "inline-source": "^7.2.0"
+  }
 }

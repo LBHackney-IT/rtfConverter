@@ -1,5 +1,6 @@
 const fs = require("fs");
 const { spawn } = require("child_process");
+const { inlineSource } = require("inline-source");
 const statusCodes = {
   415: "Unsupported Media Type",
   500: "Internal Server Error",
@@ -26,23 +27,33 @@ const send_error = (statusCode, message) => {
   );
 };
 
+const inlineImages = async (path) => {
+  return inlineSource(path, {
+    compress: true,
+    attribute: false,
+    rootpath: "/tmp",
+    // Skip all css types and png formats
+  });
+};
+
 const convertRtf = async (rtf) => {
   fs.writeFileSync("/tmp/temp.rtf", rtf);
   let out = "";
   let error = "";
   return new Promise((resolve, reject) => {
-    const converter = spawn("/opt/bin/perl", [
-      "./rtf2html.pl",
-      "/tmp/temp.rtf",
-      "/tmp/temp.html",
-    ]);
+    const converter = spawn(
+      "/opt/bin/perl",
+      ["./rtf2html.pl", "/tmp/temp.rtf", "/tmp/temp.html"],
+      {
+        cwd: "./perl",
+      }
+    );
     converter.stderr.on("data", (data) => (error += data));
     converter.stdout.on("data", (data) => (out += data));
     converter.on("close", (code) => {
       console.log(out);
-      code !== 0
-        ? reject(error)
-        : resolve(fs.readFileSync("/tmp/temp.html", "utf8"));
+      let html = inlineImages("/tmp/temp.html");
+      code !== 0 ? reject(error) : resolve(html);
     });
   });
 };

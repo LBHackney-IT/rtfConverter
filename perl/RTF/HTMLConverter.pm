@@ -41,7 +41,7 @@ sub init {
     $self->{image_uri}         = $opts{image_uri} || '';
     $self->{image_convert}     = $opts{image_convert} if exists $opts{image_convert};
     $self->{image_mogrify}     = $opts{image_mogrify} if exists $opts{image_mogrify};
-    $self->{image_wmf2eps}     = $opts{image_wmf2eps} if exists $opts{image_wmf2eps};
+    $self->{image_wmf2gd}     = $opts{image_wmf2gd} if exists $opts{image_wmf2gd};
     $self->{screen_resolution} = $opts{screen_resolution} || 100; # dpi
   }
 
@@ -1888,19 +1888,11 @@ sub get_image_scale_command {
   return ($mogrify, '-geometry', sprintf("%dx%d!", $w, $h), $imgname);
 }
 
-sub get_wmf2ps_command {
-  my ($self, $wmfname, $psname) = @_;
-  my $wmf2eps = exists $self->{image_wmf2eps} ? $self->{image_wmf2eps} : 'wmf2eps';
-  return unless $wmf2eps;
-  return ($wmf2eps, qw(--ps --centre --maxpect -o), $psname , $wmfname);
-}
-
-sub get_ps2gif_command {
-  my ($self, $psname, $gifname, $w, $h) = @_;
-  my $convert = exists $self->{image_convert} ? $self->{image_convert} : 'convert';
-  return unless $convert;
-  my @geom = $w && $h ? ('-geometry', sprintf("%dx%d!", $w, $h)): ();
-  return ($convert, qw(-crop 0x0 -page +0+0), @geom, $psname, $gifname);
+sub get_wmf2gd_command {
+  my ($self, $wmfname, $pngname) = @_;
+  my $wmf2gd = exists $self->{image_wmf2gd} ? $self->{image_wmf2gd} : 'wmf2gd';
+  return unless $wmf2gd;
+  return ($wmf2gd, qw(--wmf-fontdir=/opt/share/fonts/default/Type1/ -t png -o), $pngname , $wmfname);
 }
 
 sub _convert_picture {
@@ -1935,7 +1927,7 @@ sub _convert_picture {
 
 sub cw_wmetafile {
   my ($self, $type) = @_;
-  my ($gifname, $gifurl) = $self->get_next_image_name('gif');
+  my ($pngname, $pngurl) = $self->get_next_image_name('png');
   my ($w, $h);
   my $hexmode = $self->hex_mode();
   try {
@@ -1948,21 +1940,9 @@ sub cw_wmetafile {
     $self->parse();
     $wmf->close();
     $self->hex_mode($hexmode);
-    my $ps = File::Temp->new(SUFFIX => '.ps', UNLINK => 1);
-    throw Error::Simple("Can't open ps file: $!!\n") unless $ps;
-    $ps->close();
-    my @command = $self->get_wmf2ps_command($wmf->filename(), $ps->filename());
+    my @command = $self->get_wmf2gd_command($wmf->filename(), $pngname);
     return unless @command;
     my $err = $self->exec_program(undef, @command);
-    throw Error::Simple($err) if length $err;
-    return unless -s $ps->filename();
-    my ($width, $height, $sx, $sy) = @dims;
-    if($width && $height){
-      ($w, $h) = $self->twips2pt($sx?$width*$sx/100:$width, $sy?$height*$sy/100:$height);
-    }
-    @command = $self->get_ps2gif_command($ps->filename(), $gifname, $w, $h);
-    return unless @command;
-    $err = $self->exec_program(undef, @command);
     throw Error::Simple($err) if length $err;
   } catch Error::Simple with {
     my $err = shift;
@@ -1970,10 +1950,10 @@ sub cw_wmetafile {
     $self->log($err, 1) if length $err;
     return;
   };
-  return unless -s $gifname;
+  return unless -s $pngname;
   $self->remove_buffer($self->notes('pict_buf'));
   my $img = $self->append_tag('img');
-  $img->setAttribute(src    => $gifurl);
+  $img->setAttribute(src    => $pngurl);
   $img->setAttribute(width  => $w) if $w;
   $img->setAttribute(height => $h) if $h;
   $img->setAttribute(alt    => '');
@@ -2806,11 +2786,11 @@ A path to ImageMagick's C<mogrify> utility. If the value is C<undef> or
 the specified file does not exists, the images extracted from RTF will
 not be scaled. Default value is C<mogrify>.
 
-=item image_wmf2eps
+=item image_wmf2gd
 
-A path to libwmf's C<wmf2eps> utility. If the value is C<undef> or the
-specified file does not exists, the WMF-images will not be extracted
-from RTF. Default value is C<wmf2eps>.
+A path to libwmf's C<wmf2gd> utility. If the value is C<undef> or the
+specified file does not exist, the WMF-images will not be extracted
+from RTF. Default value is C<wmf2gd>.
 
 =item screen_resolution
 
