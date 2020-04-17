@@ -1,8 +1,8 @@
 .PHONY: build
-build: build-perl-layer build-image-layer
+build: perl-layer image-layer
 	docker build --tag rtf_converter:latest .
 
-build-perl-layer: perl_layer/lib/libcrypt.so.1
+perl-layer: perl_layer/lib/libcrypt.so.1
 
 perl_layer/lib/libcrypt.so.1:
 	rm -rf perl_layer
@@ -14,17 +14,14 @@ perl_layer/lib/libcrypt.so.1:
 	docker cp build:/lib64/libexpat.so.1.6.0 ./perl_layer/lib/libexpat.so.1
 	docker rm build
 
-build-image-layer: image_layer/bin/convert
+image-layer: image_layer/bin/convert
 
 image_layer/bin/convert:
 	rm -rf image_layer
-	mkdir -p ./image_layer
 	-docker rm image
 	docker run --name image lambci/yumda:2 yum install -y ImageMagick libwmf ghostscript-fonts
-	docker cp image:/lambda/opt/bin ./image_layer/
-	docker cp image:/lambda/opt/etc ./image_layer/
-	docker cp image:/lambda/opt/lib ./image_layer/
-	docker cp image:/lambda/opt/share ./image_layer/
+	docker cp image:/lambda/opt ./image_layer
+	rm -rf ./image_layer/etc/fonts ./image_layer/etc/X11
 	docker rm image
 
 clean:

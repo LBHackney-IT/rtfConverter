@@ -41,7 +41,7 @@ jobs:
 
       - run:
           name: Build layers
-          command: make build-perl-layer build-image-layer
+          command: make perl-layer image-layer
 
       - persist_to_workspace:
           root: ~/repo
