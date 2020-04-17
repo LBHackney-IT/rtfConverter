@@ -12,6 +12,8 @@ build-perl-layer: build
 	docker cp build:/usr/lib64/libexpat.so.1.6.0 ./perl_layer/lib/libexpat.so.1
 	docker rm build
 
+build-image-layer: image_layer/bin/convert
+
 image_layer/bin/convert:
 	docker run --rm -v $(PWD)/image_layer:/lambda/opt lambci/yumda:2 yum install -y ImageMagick libwmf ghostscript-fonts
 	# rm -rf image_layer/share
