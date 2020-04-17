@@ -13,5 +13,5 @@ build-layer: build
 	docker rm build
 
 .PHONY: start
-start: build-layer
-	docker run -it -v $(PWD):/var/task -v $(PWD)/perl_layer/lib/perl5/site_perl:/opt/lib/perl5/site_perl -v $(PWD):/var/task -p 3000:3000 --workdir /var/task rtf_converter:latest serverless -s dev offline start
+start: build-perl-layer
+	docker run -it -v $(PWD):/var/task -p 3000:3000 --workdir /var/task rtf_converter:latest serverless -s dev offline start

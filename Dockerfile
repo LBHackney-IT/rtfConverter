@@ -11,4 +11,5 @@ RUN cd /opt && \
   ./configure && make install && \
   popd && rm -rf expat-2.2.9 && rm expat-2.2.9.tar.gz && \
   ln -s /usr/include/locale.h /usr/include/xlocale.h && \
-  cpanm --notest --no-man-pages XML::DOM RTF::HTMLConverter
+  cpanm --notest --no-man-pages Image::Info XML::DOM RTF::HTMLConverter && \
+  cp -ar /var/task/image_layer/* /opt/

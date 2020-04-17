@@ -2,7 +2,7 @@ const fs = require("fs");
 const { spawn } = require("child_process");
 const statusCodes = {
   415: "Unsupported Media Type",
-  500: "Internal Server Error"
+  500: "Internal Server Error",
 };
 
 const send = (statusCode, contentType, body) => {
@@ -10,11 +10,11 @@ const send = (statusCode, contentType, body) => {
     statusCode,
     headers: { "Content-Type": contentType },
     isBase64Encoded: false,
-    body
+    body,
   };
 };
 
-const send_html = body => {
+const send_html = (body) => {
   return send(200, "text/html", body);
 };
 
@@ -26,24 +26,28 @@ const send_error = (statusCode, message) => {
   );
 };
 
-const convertRtf = async rtf => {
+const convertRtf = async (rtf) => {
   fs.writeFileSync("/tmp/temp.rtf", rtf);
-  let html = "";
+  let out = "";
   let error = "";
   return new Promise((resolve, reject) => {
     const converter = spawn("/opt/bin/perl", [
       "./rtf2html.pl",
-      "/tmp/temp.rtf"
+      "/tmp/temp.rtf",
+      "/tmp/temp.html",
     ]);
-    converter.stdout.on("data", data => (html += data));
-    converter.stderr.on("data", data => (error += data));
-    converter.on("close", code => {
-      code !== 0 ? reject(error) : resolve(html);
+    converter.stderr.on("data", (data) => (error += data));
+    converter.stdout.on("data", (data) => (out += data));
+    converter.on("close", (code) => {
+      console.log(out);
+      code !== 0
+        ? reject(error)
+        : resolve(fs.readFileSync("/tmp/temp.html", "utf8"));
     });
   });
 };
 
-const convert = async event => {
+const convert = async (event) => {
   const contentType =
     event.headers["content-type"] || event.headers["Content-Type"];
   if (contentType !== "application/rtf")
@@ -64,7 +68,7 @@ const form = () => {
   return send_html(formDoc);
 };
 
-module.exports.handler = async event => {
+module.exports.handler = async (event) => {
   if (event.httpMethod === "GET") return form(event);
   if (event.httpMethod === "POST") return await convert(event);
 };
