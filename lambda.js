@@ -32,7 +32,6 @@ const inlineImages = async (path) => {
     compress: true,
     attribute: false,
     rootpath: "/tmp",
-    // Skip all css types and png formats
   });
 };
 
@@ -51,7 +50,7 @@ const convertRtf = async (rtf) => {
     converter.stderr.on("data", (data) => (error += data));
     converter.stdout.on("data", (data) => (out += data));
     converter.on("close", (code) => {
-      console.log(out);
+      if (out !== "") console.log(out);
       let html = inlineImages("/tmp/temp.html");
       code !== 0 ? reject(error) : resolve(html);
     });
