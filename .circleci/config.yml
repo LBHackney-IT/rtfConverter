@@ -37,7 +37,7 @@ jobs:
 
       - run:
           name: Run tests
-          command: make build test
+          command: make build test-ci
 
       - run:
           name: Build layers

@@ -40,3 +40,10 @@ test:
 	docker run --name test -d -v $(PWD):/var/task -p 4000:4000 --workdir /var/task rtf_converter:latest serverless -s dev --host 0.0.0.0 --port 4000 offline start
 	./test/wait_for_server.sh
 	jest
+
+.PHONY: test-ci
+test-ci:
+	-docker rm -f test
+	docker run --name test -d --workdir /var/task rtf_converter:latest serverless -s dev --host 0.0.0.0 --port 4000 offline start
+	docker exec test ./test/wait_for_server.sh
+	docker exec test node ./node_modules/jest/bin/jest.js

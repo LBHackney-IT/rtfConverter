@@ -1,6 +1,6 @@
 #!/bin/bash
 
-command='wget -q http://localhost:4000/ -O /dev/null';
+command='curl -s http://localhost:4000/ -o /dev/null';
 server_started_status_code=0;
 status=-1;
 
