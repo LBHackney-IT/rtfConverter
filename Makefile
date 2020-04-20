@@ -12,7 +12,7 @@ perl_layer/lib/libcrypt.so.1:
 	docker cp build:/opt/lib/perl5/site_perl/ ./perl_layer/lib/perl5/
 	docker cp build:/lib64/libcrypt-2.17.so ./perl_layer/lib/libcrypt.so.1
 	docker cp build:/lib64/libexpat.so.1.6.0 ./perl_layer/lib/libexpat.so.1
-	docker rm build
+	-docker rm build
 	rm -f ./perl_layer/lib/perl5/site_perl/5.30.2/XML/DOM.pm
 	rm -f ./perl_layer/lib/perl5/site_perl/5.30.2/x86_64-linux/RTF/HTMLConverter.pm
 
@@ -24,7 +24,7 @@ image_layer/bin/convert:
 	docker run --name image lambci/yumda:2 yum install -y ImageMagick libwmf ghostscript-fonts
 	docker cp image:/lambda/opt ./image_layer
 	rm -rf ./image_layer/etc/fonts ./image_layer/etc/X11
-	docker rm image
+	-docker rm image
 
 clean:
 	rm -rf perl_layer

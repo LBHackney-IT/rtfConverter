@@ -9,6 +9,6 @@ RUN cd /opt && \
 
 COPY . /var/task/
 
-RUN npm install --only=prod && \
+RUN npm install && \
   cp -ar /var/task/perl_layer/* /opt/ && \
   cp -ar /var/task/image_layer/* /opt/
