@@ -1,4 +1,4 @@
-use lib '.';
+use lib "/var/task/perl";
 use XML::DOM;
 use RTF::HTMLConverter;
 use File::Basename;

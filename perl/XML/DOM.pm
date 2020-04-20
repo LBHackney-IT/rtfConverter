@@ -31,10 +31,11 @@ use strict;
 
 use vars qw( $VERSION @ISA @EXPORT
 	     $IgnoreReadOnly $SafeMode $TagStyle
-	     %DefaultEntities %DecodeDefaultEntity
+	     %DefaultEntities
 	   );
 use Carp;
 use XML::RegExp;
+use HTML::Entities;
 
 BEGIN
 {
@@ -100,15 +101,6 @@ sub ATTLIST_DECL_NODE		() { 16 }	# not in the DOM Spec
  "lt"		=> "<",
  "apos"		=> "'",
  "amp"		=> "&"
-);
-
-%DecodeDefaultEntity =
-(
- '"' => "&quot;",
- ">" => "&gt;",
- "<" => "&lt;",
- "'" => "&apos;",
- "&" => "&amp;"
 );
 
 #
@@ -275,22 +267,7 @@ sub encodeText
 {
     my ($str, $default) = @_;
     return undef unless defined $str;
-
-    if ($] >= 5.006) {
-      $str =~ s/([$default])|(]]>)/
-        defined ($1) ? $DecodeDefaultEntity{$1} : "]]&gt;" /egs;
-    }
-    else {
-      $str =~ s/([\xC0-\xDF].|[\xE0-\xEF]..|[\xF0-\xFF]...)|([$default])|(]]>)/
-        defined($1) ? XmlUtf8Decode ($1) :
-        defined ($2) ? $DecodeDefaultEntity{$2} : "]]&gt;" /egs;
-    }
-
-#?? could there be references that should not be expanded?
-# e.g. should not replace &#nn; &#xAF; and &abc;
-#    $str =~ s/&(?!($ReName|#[0-9]+|#x[0-9a-fA-F]+);)/&amp;/go;
-
-    $str;
+    return encode_entities($str);
 }
 
 #
