@@ -604,7 +604,7 @@ sub exec_program {
       throw Error::Simple("Can't chdir to '$dirname': $!!\n") unless chdir $dirname;
     }
     no warnings 'syntax';
-    exec @_;
+    system @_;
     throw Error::Simple("Can't exec '".join(' ', @_)."': $!!\n");
   }
   my $output = <$fh>;
