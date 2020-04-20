@@ -14,6 +14,8 @@ jobs:
     steps:
       - checkout
 
+      - setup_remote_docker
+
       - restore_cache:
           keys:
             - v1-dependencies-{{ checksum "package-lock.json" }}
@@ -33,11 +35,9 @@ jobs:
           name: Run linter
           command: npm run lint
 
-      # - run:
-      #     name: Run tests with coverage
-      #     command: npm run test-coverage
-
-      - setup_remote_docker
+      - run:
+          name: Run tests
+          command: make build test
 
       - run:
           name: Build layers

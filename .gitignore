@@ -3,4 +3,4 @@ extlocal
 node_modules
 perl_layer
 image_layer
-*.rtf
+/*.rtf
