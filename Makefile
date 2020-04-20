@@ -30,4 +30,4 @@ clean:
 
 .PHONY: start
 start: build
-	docker run -it -v $(PWD):/var/task -p 3000:3000 --workdir /var/task rtf_converter:latest serverless -s dev offline start
+	docker run -it -v $(PWD):/var/task -p 3000:3000 --workdir /var/task rtf_converter:latest serverless -s dev --host 0.0.0.0 offline start
