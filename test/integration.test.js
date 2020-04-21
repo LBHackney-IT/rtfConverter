@@ -26,7 +26,9 @@ const convertFile = async (inType, outType, name) => {
 
 const diff = (file1, file2) => {
   const htmlDiffer = new HtmlDiffer();
-  return htmlDiffer.isEqual(file1, file2);
+  result = htmlDiffer.isEqual(file1, file2);
+  if (!result) console.log(htmlDiffer.diffHtml(file1, file2));
+  return result;
 };
 
 describe("Converting RTF to HTML", () => {
