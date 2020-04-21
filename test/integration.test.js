@@ -3,10 +3,10 @@ const fetch = require("node-fetch");
 const HtmlDiffer = require("html-differ").HtmlDiffer;
 const headers = {
   rtf: "application/rtf",
-  html: "text/html"
+  html: "text/html",
 };
 
-const fileList = type => fs.readdirSync(`./test/${type}`);
+const fileList = (type) => fs.readdirSync(`./test/${type}`);
 const rtfFiles = fileList("rtf");
 
 const readFixture = (type, name) =>
@@ -19,9 +19,9 @@ const convertFile = async (inType, outType, name) => {
     body,
     headers: {
       "Content-Type": headers[inType],
-      Accept: headers[outType]
-    }
-  }).then(res => res.text());
+      Accept: headers[outType],
+    },
+  }).then((res) => res.text());
 };
 
 const diff = (file1, file2) => {

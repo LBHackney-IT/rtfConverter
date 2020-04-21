@@ -3,7 +3,7 @@ const { spawn } = require("child_process");
 const { inlineSource } = require("inline-source");
 const statusCodes = {
   415: "Unsupported Media Type",
-  500: "Internal Server Error"
+  500: "Internal Server Error",
 };
 
 const send = (statusCode, contentType, body) => {
@@ -11,11 +11,11 @@ const send = (statusCode, contentType, body) => {
     statusCode,
     headers: { "Content-Type": contentType },
     isBase64Encoded: false,
-    body
+    body,
   };
 };
 
-const send_html = body => {
+const send_html = (body) => {
   return send(200, "text/html", body);
 };
 
@@ -27,15 +27,15 @@ const send_error = (statusCode, message) => {
   );
 };
 
-const inlineImages = async path => {
+const inlineImages = async (path) => {
   return inlineSource(path, {
     compress: true,
     attribute: false,
-    rootpath: "/tmp"
+    rootpath: "/tmp",
   });
 };
 
-const convertRtf = async rtf => {
+const convertRtf = async (rtf) => {
   fs.writeFileSync("/tmp/temp.rtf", rtf);
   let out = "";
   let error = "";
@@ -44,12 +44,12 @@ const convertRtf = async rtf => {
       "/opt/bin/perl",
       ["./rtf2html.pl", "/tmp/temp.rtf", "/tmp/temp.html"],
       {
-        cwd: "./perl"
+        cwd: "./perl",
       }
     );
-    converter.stderr.on("data", data => (error += data));
-    converter.stdout.on("data", data => (out += data));
-    converter.on("close", code => {
+    converter.stderr.on("data", (data) => (error += data));
+    converter.stdout.on("data", (data) => (out += data));
+    converter.on("close", (code) => {
       if (out !== "") console.log(out);
       let html = inlineImages("/tmp/temp.html");
       code !== 0 ? reject(error) : resolve(html);
@@ -57,7 +57,7 @@ const convertRtf = async rtf => {
   });
 };
 
-const convert = async event => {
+const convert = async (event) => {
   const contentType =
     event.headers["content-type"] || event.headers["Content-Type"];
   if (contentType !== "application/rtf")
@@ -78,7 +78,7 @@ const form = () => {
   return send_html(formDoc);
 };
 
-module.exports.handler = async event => {
+module.exports.handler = async (event) => {
   if (event.httpMethod === "GET") return form(event);
   if (event.httpMethod === "POST") return await convert(event);
 };
