@@ -35,9 +35,9 @@ jobs:
           name: Run linter
           command: npm run lint
 
-      - run:
-          name: Run tests
-          command: make build test-ci
+      # - run:
+      #     name: Run tests
+      #     command: make build test-ci
 
       - run:
           name: Build layers
