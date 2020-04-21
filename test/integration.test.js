@@ -6,6 +6,9 @@ const headers = {
   html: 'text/html'
 };
 
+const testUrl = process.env.TEST_URL;
+if (!testUrl) throw 'You must set the TEST_URL environment variable';
+
 const fileList = type => fs.readdirSync(`./test/${type}`);
 const rtfFiles = fileList('rtf');
 
@@ -14,7 +17,7 @@ const readFixture = (type, name) =>
 
 const convertFile = async (inType, outType, name) => {
   const body = readFixture(inType, name);
-  return await fetch('http://localhost:4000/', {
+  return await fetch(testUrl, {
     method: 'POST',
     body,
     headers: {

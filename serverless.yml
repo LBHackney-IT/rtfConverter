@@ -6,6 +6,7 @@ provider:
   region: eu-west-2
   stage: ${opt:stage}
   memorySize: 256
+  timeout: 30
   layers:
     - arn:aws:lambda:${self:provider.region}:445285296882:layer:perl-5-30-runtime:8
     - { Ref: PerlModulesLambdaLayer }
@@ -16,11 +17,11 @@ plugins:
 
 package:
   exclude:
-    - "Dockerfile"
-    - "*.rtf"
-    - "*.sh"
-    - "Makefile"
-    - "README.md"
+    - 'Dockerfile'
+    - '*.rtf'
+    - '*.sh'
+    - 'Makefile'
+    - 'README.md'
 
 layers:
   perlModules:
@@ -35,5 +36,5 @@ functions:
     handler: lambda.handler
     events:
       - http:
-          path: "/"
+          path: '/'
           method: ANY
