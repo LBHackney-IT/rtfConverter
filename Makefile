@@ -23,7 +23,7 @@ image_layer/bin/convert:
 	-docker rm image
 	docker run --name image lambci/yumda:2 yum install -y ImageMagick libwmf ghostscript-fonts
 	docker cp image:/lambda/opt ./image_layer
-	rm -rf ./image_layer/etc/fonts ./image_layer/etc/X11
+	rm -rf ./image_layer/etc/fonts ./image_layer/etc/X11 ./image_layer/bin/pango-querymodules-64
 	-docker rm image
 
 clean:
