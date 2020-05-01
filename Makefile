@@ -41,6 +41,6 @@ test:
 	./test/wait_for_server.sh
 	jest
 
-.PHONY: test
-test:
+.PHONY: test-ci
+test-ci:
 	node ./node_modules/jest/bin/jest.js
