@@ -7,6 +7,10 @@ At Hackney we use lots of RTFs for letters to people. We would like to be able t
 
 This repo wraps uses serverless to deploy this library to AWS lambda.
 
+## Using the API
+
+Send an RTF document as the body of a POST request to the endpoint this is deployed on, making sure to specify `application/rtf` as the `Content-Type` header. You should receive the converted HTML in the response body.
+
 ## Using locally
 
 Run `npm install` to install all of the node.js dependencies and then `make start` which will run serverless offline inside a docker container with all of the Perl dependencies installed.
