@@ -7,7 +7,7 @@
     "eslint-plugin-prettier": "^3.1.2",
     "html-differ": "^1.4.0",
     "jest": "^25.4.0",
-    "node-fetch": "^2.6.0",
+    "node-fetch": "^2.6.1",
     "prettier": "^1.18.2",
     "serverless": "^1.66.0",
     "serverless-offline": "^5.12.1"
